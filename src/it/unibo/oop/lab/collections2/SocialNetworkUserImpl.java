@@ -1,7 +1,10 @@
 package it.unibo.oop.lab.collections2;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -30,6 +33,8 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      * think of what type of keys and values would best suit the requirements
      */
 
+	
+	private Map<String, List<U>> groups = new HashMap<>();
     /*
      * [CONSTRUCTORS]
      * 
@@ -57,7 +62,9 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
         super(name, surname, user, userAge);
     }
-
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+        super(name, surname, user);
+    }
     /*
      * [METHODS]
      * 
@@ -66,17 +73,40 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
 
     @Override
     public boolean addFollowedUser(final String circle, final U user) {
-        return false;
+    	if(groups.containsKey(circle)) {
+    		if(!groups.get(circle).contains(user)) {
+    			groups.get(circle).add(user);
+    			return true;
+    		}
+    		else return false;
+    	}
+    	else {
+    		groups.put(circle, new LinkedList<U>());
+    		groups.get(circle).add(user);
+    		return true;
+    	}
     }
 
     @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
-        return null;
+    	if (groups.containsKey(groupName)) {
+    		List<U> tempmap=new LinkedList<>();
+    		tempmap.addAll(groups.get(groupName));
+    		return tempmap;
+    	}
+    	else {
+    		System.err.println("The specified group doesn't exist!");
+    		return new LinkedList<>();
+    	}
     }
 
     @Override
     public List<U> getFollowedUsers() {
-        return null;
+    	List<U> followed=new LinkedList<U>();
+    	for(List<U> scan : groups.values()) {
+    		followed.addAll(scan);
+    	}
+        return followed;
     }
 
 }
